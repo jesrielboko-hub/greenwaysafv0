@@ -1,0 +1,3 @@
+import {getContent} from '../../lib/content'; import ServiceCard from '../../components/ServiceCard';
+export const dynamic='force-dynamic';
+export default function Services(){const {services}=getContent();return <main><section className="page-hero"><div className="container"><div className="eyebrow">FIELD EXPERTISE</div><h1 className="display">FULL ATHLETIC FIELD SERVICES.</h1><p>Explore Greenway's construction, renovation, field-system and maintenance capabilities.</p></div></section><section className="section"><div className="container"><div className="grid service-grid">{services.map(s=><ServiceCard key={s.slug} service={s}/>)}</div></div></section></main>}

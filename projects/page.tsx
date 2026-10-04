@@ -1,0 +1,3 @@
+import {getContent} from '../../lib/content'; import ProjectsBrowser from '../../components/ProjectsBrowser';
+export const dynamic='force-dynamic';
+export default function Projects(){const {projects}=getContent();return <main><section className="page-hero"><div className="container"><div className="eyebrow">PROOF IN THE FIELD</div><h1 className="display">PROJECTS & CASE STUDIES</h1><p>Explore Greenway Athletic Field Services projects by sport and project type. Each project is structured to grow into a full case study as additional photography and details become available.</p></div></section><section className="section"><div className="container"><ProjectsBrowser projects={projects}/></div></section></main>}

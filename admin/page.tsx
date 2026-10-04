@@ -1,0 +1,86 @@
+'use client';
+import {useEffect,useState} from 'react';
+import {ArrowLeft,LogOut,Save,Plus,Trash2,Upload,ExternalLink} from 'lucide-react';
+import Link from 'next/link';
+
+type AnyObj=any;
+const blankProject={slug:'',name:'',location:'',year:'',sport:'',image:'',summary:'',scope:[],services:[],featured:false};
+const blankService={slug:'',name:'',category:'',icon:'',description:'',image:'',fullDescription:'',symptoms:[],process:[],relatedProjects:[]};
+export default function Admin(){const [authed,setAuthed]=useState(false),[password,setPassword]=useState(''),[content,setContent]=useState<AnyObj>(null),[leads,setLeads]=useState<any[]>([]),[analytics,setAnalytics]=useState<any>({totalViews:0,last7Days:0,topPages:[]}),[tab,setTab]=useState('dashboard'),[editing,setEditing]=useState<any>(null),[message,setMessage]=useState('');
+ async function load(){const r=await fetch('/api/admin/content');if(r.status===401){setAuthed(false);return}setAuthed(true);setContent(await r.json());const l=await fetch('/api/admin/leads');if(l.ok)setLeads(await l.json());const a=await fetch('/api/admin/analytics');if(a.ok)setAnalytics(await a.json())}
+ useEffect(()=>{load()},[]);
+ async function login(e:any){e.preventDefault();const r=await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password})});if(r.ok){setPassword('');await load()}else setMessage('Invalid password')}
+ async function save(next=content){const r=await fetch('/api/admin/content',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(next)});if(r.ok){setContent((await r.json()).content);setMessage('Saved');setEditing(null);setTimeout(()=>setMessage(''),1800)}else setMessage('Save failed')}
+ async function upload(e:any,cb:(url:string)=>void){const file=e.target.files?.[0];if(!file)return;const fd=new FormData();fd.append('file',file);const r=await fetch('/api/admin/upload',{method:'POST',body:fd});const j=await r.json();if(j.url)cb(j.url);}
+ if(!authed)return <main className="admin-login"><form onSubmit={login}><div className="eyebrow">GREENWAY AFS</div><h1 className="display">ADMIN PORTAL</h1><p className="muted">Sign in to manage Greenway website content.</p><input type="password" placeholder="Admin password" value={password} onChange={e=>setPassword(e.target.value)} autoFocus/><button className="btn btn-primary" type="submit">SIGN IN</button>{message&&<p className="admin-error">{message}</p>}</form></main>;
+ if(!content)return <main className="admin-shell"><div className="container">Loading admin…</div></main>;
+ const saveField=(field:string,value:any)=>setContent({...content,[field]:value});
+ const deleteItem=(field:string,index:number)=>{const next={...content,[field]:content[field].filter((_:any,i:number)=>i!==index)};save(next)};
+ return <main className="admin-shell"><div className="admin-top"><div className="container admin-top-inner"><Link href="/" className="admin-brand">GREENWAY AFS · ADMIN</Link><div><a href="/" target="_blank" className="admin-link">VIEW SITE <ExternalLink size={14}/></a><button className="admin-link" onClick={async()=>{await fetch('/api/admin/logout',{method:'POST'});setAuthed(false)}}><LogOut size={14}/> LOG OUT</button></div></div></div><div className="container admin-layout"><aside className="admin-sidebar">{[['dashboard','Dashboard'],['projects','Projects'],['services','Services'],['leadership','Leadership'],['testimonials','Testimonials'],['resource','Guide / Resource'],['partners','Industry Partners'],['settings','Site Settings'],['leads','Leads']].map(([id,label])=><button className={tab===id?'active':''} onClick={()=>{setTab(id);setEditing(null)}} key={id}>{label}</button>)}</aside><section className="admin-main"><div className="admin-heading"><div><div className="eyebrow">CONTENT MANAGEMENT</div><h1 className="display">{tab.replaceAll('-',' ')}</h1></div>{message&&<span className="save-message">{message}</span>}</div>
+ {tab==='dashboard'&&<>
+  <div className="admin-cards">
+   <div><strong>{content.projects.length}</strong><span>Projects</span></div>
+   <div><strong>{content.services.length}</strong><span>Services</span></div>
+   <div><strong>{leads.length}</strong><span>Leads</span></div>
+   <div><strong>{analytics.totalVisits||0}</strong><span>Website Visits</span></div>
+  </div>
+  <div className="admin-overview">
+   <div className="admin-panel"><h2>Quick Start</h2><ol className="quick-start">
+    <li><strong>Projects:</strong> add new projects, update locations, sports, photos and case-study details.</li>
+    <li><strong>Services:</strong> update service descriptions and related field information.</li>
+    <li><strong>Leadership:</strong> keep leadership bios current.</li>
+    <li><strong>Guide / Resource:</strong> update the Built Beneath the Surface resource and cover.</li>
+    <li><strong>Leads:</strong> review Field Assessment and Guide requests from visitors.</li>
+    <li><strong>Site Settings:</strong> update the business phone, email and description.</li>
+   </ol></div>
+   <div className="admin-panel"><h2>Lead Overview</h2><div className="analytics-list">
+    <div className="analytics-row"><span>Field Assessments</span><strong>{leads.filter(l=>l.type==='assessment').length}</strong></div>
+    <div className="analytics-row"><span>Guide Requests</span><strong>{leads.filter(l=>l.type==='guide').length}</strong></div>
+    <div className="analytics-row"><span>Total Leads</span><strong>{leads.length}</strong></div>
+   </div><p className="stat-note">Website visits are estimated from anonymous browser sessions. Page views are also tracked. No IP addresses are stored.</p></div>
+  </div>
+  <div className="admin-panel" style={{marginTop:18}}><h2>Website Activity</h2><div className="admin-cards"><div><strong>{analytics.last7DaysVisits||0}</strong><span>Visits · Last 7 Days</span></div></div>{analytics.topPages?.length>0&&<div className="analytics-list">{analytics.topPages.map((p:any)=><div className="analytics-row" key={p.page}><span>{p.page}</span><strong>{p.views}</strong></div>)}</div>}</div>
+ </>}
+ {tab==='projects'&&<EditorList items={content.projects} setItems={(v:any)=>saveField('projects',v)} onSave={()=>save()} editing={editing} setEditing={setEditing} blank={blankProject} titleField="name" fields={['name','slug','location','year','sport','image','summary']} arrayFields={['scope','services']} />}
+ {tab==='services'&&<EditorList items={content.services} setItems={(v:any)=>saveField('services',v)} onSave={()=>save()} editing={editing} setEditing={setEditing} blank={blankService} titleField="name" fields={['name','slug','category','icon','image','description','fullDescription']} arrayFields={['symptoms','process','relatedProjects']} />}
+ {tab==='leadership'&&<EditorList items={content.leadership} setItems={(v:any)=>saveField('leadership',v)} onSave={()=>save()} editing={editing} setEditing={setEditing} blank={{role:'',name:'',bio:''}} titleField="name" fields={['role','name','bio']} />}
+ {tab==='testimonials'&&<EditorList items={content.testimonials} setItems={(v:any)=>saveField('testimonials',v)} onSave={()=>save()} editing={editing} setEditing={setEditing} blank={{id:'',name:'',organization:'',role:'',quote:'',featured:false}} titleField="name" fields={['name','organization','role','quote']} />}
+ {tab==='resource'&&<ResourceEditor content={content} save={save}/>} 
+ {tab==='partners'&&<div className="admin-form"><label>Industry partner image</label><div className="upload-row"><input value={content.partnersImage} onChange={e=>saveField('partnersImage',e.target.value)}/><label className="upload-btn"><Upload size={15}/> Upload<input hidden type="file" accept="image/*" onChange={e=>upload(e,(url)=>saveField('partnersImage',url))}/></label></div><img className="partner-preview" src={content.partnersImage} alt="Industry partners"/><button className="btn btn-primary" onClick={()=>save()}>SAVE PARTNER IMAGE <Save size={15}/></button></div>}
+ {tab==='settings'&&<div className="admin-form"><Field label="Business name" value={content.site.name} onChange={(v:any)=>saveField('site',{...content.site,name:v})}/><Field label="Phone" value={content.site.phone} onChange={(v:any)=>saveField('site',{...content.site,phone:v})}/><Field label="Email" value={content.site.email} onChange={(v:any)=>saveField('site',{...content.site,email:v})}/><Field label="Description" value={content.site.description} onChange={(v:any)=>saveField('site',{...content.site,description:v})}/><button className="btn btn-primary" onClick={()=>save()}>SAVE SETTINGS <Save size={15}/></button></div>}
+ {tab==='leads'&&<LeadInbox leads={leads}/>}
+ </section></div></main>}
+
+function Field({label,value,onChange}:{label:string,value:any,onChange:(v:any)=>void}){return <label className="admin-field"><span>{label}</span><input value={value||''} onChange={e=>onChange(e.target.value)}/></label>}
+function EditorList({items,setItems,onSave,editing,setEditing,blank,titleField,fields,arrayFields=[]}:any){const update=(i:number,k:string,v:any)=>{const next=[...items];next[i]={...next[i],[k]:v};setItems(next)};return <div className="editor-list"><div className="list-toolbar"><button className="btn btn-primary" onClick={()=>setEditing({...blank,__new:true})}><Plus size={15}/> ADD NEW</button><button className="btn btn-outline" onClick={onSave}><Save size={15}/> SAVE CHANGES</button></div>{editing&&<div className="editor-panel"><div className="editor-grid">{fields.map((f:string)=><Field key={f} label={f} value={editing[f]} onChange={(v:any)=>setEditing({...editing,[f]:v})}/>)}{arrayFields.map((f:string)=><label className="admin-field" key={f}><span>{f} (one per line)</span><textarea value={(editing[f]||[]).join('\n')} onChange={e=>setEditing({...editing,[f]:e.target.value.split('\n').map((x:string)=>x.trim()).filter(Boolean)})}/></label>)}</div><div className="editor-actions"><button className="btn btn-primary" onClick={()=>{if(editing.__new)setItems([...items,{...editing,__new:undefined}]);else setItems(items.map((x:any)=>x[titleField]===editing[titleField]?editing:x));setEditing(null)}}>APPLY</button><button className="btn btn-outline" onClick={()=>setEditing(null)}>CANCEL</button></div></div>}<div className="admin-list">{items.map((item:any,i:number)=><article key={item.id||item.slug||i}><div><strong>{item[titleField]||'Untitled'}</strong><small>{item.location||item.category||item.role||''}</small></div><div className="row-actions"><button onClick={()=>setEditing(item)}>EDIT</button><button onClick={()=>confirm('Delete this item?')&&deleteItemLocal(items,setItems,i)}>DELETE</button></div></article>)}</div></div>}
+function deleteItemLocal(items:any[],setItems:any,i:number){setItems(items.filter((_:any,j:number)=>j!==i))}
+function ResourceEditor({content,save}:any){const [r,setR]=useState(content.resource);return <div className="admin-form"><Field label="Title" value={r.title} onChange={(v:any)=>setR({...r,title:v})}/><label className="admin-field"><span>Description</span><textarea value={r.description} onChange={e=>setR({...r,description:e.target.value})}/></label><label className="admin-field"><span>Cover image URL</span><input value={r.cover} onChange={e=>setR({...r,cover:e.target.value})}/></label><label className="upload-btn"><Upload size={15}/> Upload cover<input hidden type="file" accept="image/*" onChange={async e=>{const file=e.target.files?.[0];if(!file)return;const fd=new FormData();fd.append('file',file);const res=await fetch('/api/admin/upload',{method:'POST',body:fd});const j=await res.json();if(j.url)setR({...r,cover:j.url})}}/></label><img className="guide-preview" src={r.cover} alt="Guide cover"/><button className="btn btn-primary" onClick={()=>{content.resource=r;save(content)}}>SAVE RESOURCE <Save size={15}/></button></div>}
+
+
+function LeadInbox({leads}:{leads:any[]}){
+ const [filter,setFilter]=useState('all');
+ const visible=leads.filter(l=>filter==='all'||l.type===filter);
+ return <div className="lead-inbox">
+  <div className="lead-toolbar">
+   <div><strong>{visible.length}</strong> submissions</div>
+   <div className="lead-filters">
+    {['all','assessment','guide'].map(x=><button key={x} className={filter===x?'active':''} onClick={()=>setFilter(x)}>{x==='all'?'All':x==='assessment'?'Field Assessments':'Guide Requests'}</button>)}
+   </div>
+  </div>
+  {visible.length===0?<div className="admin-panel"><p className="muted">No submissions yet.</p></div>:<div className="lead-cards">{visible.map(l=><LeadCard key={l.id} lead={l}/>)}</div>}
+ </div>
+}
+
+function LeadCard({lead}:{lead:any}){
+ const d=lead.data||{};
+ const label=lead.type==='assessment'?'FIELD ASSESSMENT':'GUIDE REQUEST';
+ return <article className="lead-card">
+  <div className="lead-card-top"><div><span className="pill">{label}</span><h2>{d.firstName||d.name||'Unnamed'} {d.lastName||''}</h2><p>{d.organization||'No organization provided'} · {new Date(lead.createdAt).toLocaleString()}</p></div><a className="btn btn-outline btn-small" href={`mailto:${d.email}`}>EMAIL</a></div>
+  <div className="lead-details">
+   <div><span>Email</span><strong>{d.email||'—'}</strong></div>
+   {lead.type==='assessment'&&<><div><span>Phone</span><strong>{d.phone||'—'}</strong></div><div><span>Field Location</span><strong>{d.location||'—'}</strong></div><div><span>Field Type</span><strong>{d.fieldType||'—'}</strong></div><div><span>Need</span><strong>{d.need||'—'}</strong></div><div><span>Timeline</span><strong>{d.timeline||'—'}</strong></div></>}
+  </div>
+  {lead.type==='assessment'&&d.description&&<div className="lead-message"><span>Project Description</span><p>{d.description}</p></div>}
+  <details className="lead-raw"><summary>View submission details</summary><pre>{JSON.stringify(d,null,2)}</pre></details>
+ </article>
+}
