@@ -1,32 +1,22 @@
-# Greenway Athletic Field Services — Website Rebuild
+# Greenway Athletic Field Services
 
-Modern Next.js website for Greenway Athletic Field Services, designed around the supplied Greenway brand guide and current-site project content.
+Modern, conversion-focused Greenway AFS website built with Next.js and designed around the supplied Greenway brand guide.
 
-## Run locally
+## Routes
 
-```bash
-npm install
-npm run dev
-```
+- `/` — homepage
+- `/services` — full services page
+- `/services/[slug]` — reusable service pages
+- `/projects` — filterable project library
+- `/projects/[slug]` — case studies
+- `/industries/[slug]` — audience pages
+- `/about` — leadership and industry partners
+- `/resources` — Built Beneath the Surface guide request
+- `/contact` — field assessment
+- `/admin` — admin console
 
-Open http://localhost:3000.
+## Admin
 
-## Deploy on Render
+Set `ADMIN_PASSWORD` and `SESSION_SECRET` in Render. The admin portal is intentionally included in the same web service so it can be deployed alongside the public site.
 
-Create a **Web Service** connected to this GitHub repository.
-
-- Build Command: `npm install && npm run build`
-- Start Command: `npm start`
-- Node: 20+
-
-Environment variables are optional; see `.env.example`.
-
-## Content / photos
-
-Project and service data lives in `lib/content.ts`. The current project images initially point to the real Greenway Wix-hosted images. Replace these URLs with Greenway's preferred photo repository assets as they become available.
-
-The site intentionally uses a data-driven structure so additional projects/services can be added without rebuilding page layouts.
-
-## Contact form
-
-The assessment form is currently a front-end form. Connect it to Formspree, Resend, HubSpot, a server action, or another approved destination before launch. Do not publish the site with an unconfigured production form.
+The current Free Render version uses the local filesystem as a temporary datastore. See `RENDER.md` for persistence limitations and the upgrade path.

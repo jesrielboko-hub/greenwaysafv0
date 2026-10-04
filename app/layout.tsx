@@ -1,3 +1,4 @@
-import './globals.css'; import Header from '../components/Header'; import Footer from '../components/Footer'; import {site} from '../lib/content';
-export const metadata={title:{default:'Greenway Athletic Field Services | Athletic Fields Built to Perform',template:'%s | Greenway Athletic Field Services'},description:site.description,metadataBase:new URL('https://www.greenwayafs.com'),openGraph:{title:'Greenway Athletic Field Services',description:site.description,type:'website'}};
-export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en"><body><Header/>{children}<div className="mobile-sticky"><a className="btn btn-primary" href="/contact">REQUEST A FIELD ASSESSMENT →</a></div><Footer/></body></html>}
+import './globals.css'; import Header from '../components/Header'; import Footer from '../components/Footer'; import {getContent} from '../lib/content'; import type {Metadata} from 'next';
+export const dynamic='force-dynamic';
+export async function generateMetadata():Promise<Metadata>{const {site}=getContent();return {title:site.name,description:site.description,metadataBase:new URL(process.env.NEXT_PUBLIC_SITE_URL||'https://www.greenwayafs.com'),openGraph:{title:site.name,description:site.description}}}
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en"><body><Header/>{children}<Footer/><div className="mobile-sticky"><a href="/contact" className="btn btn-primary">REQUEST A FIELD ASSESSMENT <span>→</span></a></div></body></html>}
