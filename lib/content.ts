@@ -1,0 +1,41 @@
+export const site = {
+  name: 'Greenway Athletic Field Services',
+  phone: process.env.NEXT_PUBLIC_PHONE || '203.569.2942',
+  email: process.env.NEXT_PUBLIC_EMAIL || '',
+  description: 'Athletic field construction, renovation and maintenance for municipalities, schools, universities and sports organizations.',
+};
+
+export const stats = [
+  ['135+', 'Years of combined experience'],
+  ['300+', 'Athletic field renovations'],
+  ['125+', 'Athletic fields maintained'],
+  ['1,000+', 'Acres maintained weekly'],
+];
+
+const wix = 'https://static.wixstatic.com/media/';
+export const projects = [
+  {slug:'gould-manor-park', name:'Gould Manor Park', location:'Fairfield, CT', year:'2022', sport:'Baseball', image:wix+'6273a2_a2074867e3704e18b4e4888cd598fc0f~mv2.jpg', summary:'Athletic field renovation with new irrigation, engineered ballfield mix, sod and outfield fencing.', scope:['Removal of existing infield','Installation of new irrigation system','Installation of engineered ballfield mix','Installation of new sod','Installation of outfield fencing','Hydroseeding'], services:['Athletic Field Renovation','Irrigation Installation','Sod Installation','Hydroseeding']},
+  {slug:'exchange-field-complex', name:'Exchange Field Complex', location:'Madison, CT', year:'2024', sport:'Football & Softball', image:wix+'6273a2_436dfe842ec244cb99edc1bd08b1d6ad~mv2.png', summary:'Major football and softball field work including excavation, wells, soil amendment, irrigation, sod and goalposts.', scope:['Excavation of existing football field','Electrical conduit for sports lighting','Drilling and pump installation for new wells','Onsite soil screening and amendment of 3,000+ yards','New irrigation system','Engineered ballfield mix','New sod','New football goalposts'], services:['Athletic Field Construction','Irrigation Installation','Laser Grading','Sod Installation']},
+  {slug:'joseph-curtis-recreation-park', name:'Joseph Curtis Recreation Park', location:'Port Chester, NY', year:'2023', sport:'Baseball', image:wix+'6273a2_1a2d7dcd91d14d688050888b7e444452~mv2.jpg', summary:'Reconstructed baseball field with drainage, irrigation, engineered mix, sod and new backstop, fencing and dugouts.', scope:['Removal of existing infield','Installation of new drainage system','Installation of new irrigation system','Installation of engineered ballfield mix','Installation of new sod','Installation of new backstop, fencing and dugouts'], services:['Drainage Installation','Irrigation Installation','Field Renovation','Fencing & Backstops']},
+  {slug:'east-hartford-high-school', name:'East Hartford High School', location:'East Hartford, CT', year:'2024', sport:'Baseball', image:wix+'6273a2_9f669e5945c9469fba0d619c11d0ce34~mv2.png', summary:'High school field improvements including infield reconstruction, engineered mix, backstop fencing, walkway and hydroseeding.', scope:['Removal of existing infield','Excavation and removal of existing material','Installation of engineered ballfield mix','Installation of new backstop fencing','Installation of asphalt walkway','Hydroseeding'], services:['Field Renovation','Field Repair','Fencing & Backstops','Hydroseeding']},
+  {slug:'village-of-scarsdale', name:'Village of Scarsdale', location:'Scarsdale, NY', year:'2023–2024', sport:'Baseball / Softball', image:wix+'6273a2_f5b499f3951148eeb4236aa87f17100e~mv2.png', summary:'Seven baseball/softball infields renovated with excavation, irrigation, engineered mix and new sod.', scope:['Excavating, hauling and removal of existing infield material','Installation of new irrigation system','Installation of engineered ballfield mix','Installation of new sod'], services:['Field Renovation','Irrigation Installation','Sod Installation','Infield Work']},
+  {slug:'crawford-park', name:'Crawford Park', location:'Rye Brook, NY', year:'2024', sport:'Soccer & Softball', image:wix+'6273a2_fc95a47ccc3d49fcb5e98422358bfe25~mv2.png', summary:'Multi-sport renovation including field excavation, infield relocation, laser grading, irrigation, sod and backstop installation.', scope:['Excavation of existing soccer field','Relocation of softball infield','Imported 2,000 yards of new material','Survey and laser grade','Installation of new irrigation system','Installation of engineered ballfield mix','Installation of 100,000 sq/ft of new sod','Installation of softball backstop'], services:['Field Renovation','Laser Grading','Irrigation Installation','Sod Installation']},
+  {slug:'wethersfield-high-school', name:'Wethersfield High School', location:'Wethersfield, CT', year:'2023', sport:'Baseball / Softball', image:wix+'6273a2_650ca7bad6f34d3a8523ba66e3bd9a09~mv2.png', summary:'Infield reconstruction with irrigation, engineered ballfield mix, sod and new warning track material.', scope:['Excavating, hauling and removal of existing infield material','Installation of new irrigation system','Installation of engineered ballfield mix','Installation of new sod','Installation of new warning track material'], services:['Field Renovation','Irrigation Installation','Sod Installation','Infield Work']},
+];
+
+export const services = [
+ {slug:'athletic-field-construction', name:'Athletic Field Construction', category:'BUILD', icon:'construction', description:'Build athletic fields from the ground up with coordinated field systems, grading, irrigation, drainage, turf and infrastructure.', image:projects[1].image},
+ {slug:'athletic-field-renovation', name:'Athletic Field Renovation', category:'RENOVATE', icon:'renovation', description:'Reconstruct and improve existing fields with targeted work designed around field performance and long-term use.', image:projects[0].image},
+ {slug:'field-maintenance', name:'Athletic Field Maintenance', category:'MAINTAIN', icon:'maintenance', description:'Ongoing field care including mowing, lining, grooming, aeration, top dressing, fertilization and turf management.', image:projects[6].image},
+ {slug:'drainage-installation', name:'Drainage Installation', category:'FIELD SYSTEMS', icon:'drainage', description:'Address standing water and field drainage needs with athletic-field-focused drainage solutions.', image:projects[2].image},
+ {slug:'irrigation-installation', name:'Irrigation Installation', category:'FIELD SYSTEMS', icon:'irrigation', description:'Install irrigation systems designed to support healthy turf and dependable field performance.', image:projects[4].image},
+ {slug:'laser-grading', name:'Laser Grading', category:'FIELD SYSTEMS', icon:'grading', description:'Precision grading for consistent field surfaces, drainage performance and predictable playability.', image:projects[5].image},
+ {slug:'sod-installation', name:'Sod Installation', category:'FIELD SYSTEMS', icon:'sod', description:'Professional sod installation for athletic fields, from prepared surfaces through establishment.', image:projects[0].image},
+ {slug:'infield-services', name:'Infield Services', category:'SPECIALTY', icon:'infield', description:'Infield construction, renovation, engineered mixes, mound work, clay installation and lip removal.', image:projects[4].image},
+ {slug:'field-lining', name:'Field Lining & Grooming', category:'MAINTAIN', icon:'lining', description:'Field lining and grooming services that keep playing surfaces organized, maintained and ready for use.', image:projects[6].image},
+ {slug:'aeration', name:'Deep-Tine Aeration', category:'MAINTAIN', icon:'aeration', description:'Deep-tine aeration to address compaction and support healthier root zones and turf performance.', image:projects[6].image},
+ {slug:'fencing-backstops', name:'Fencing & Backstops', category:'SPECIALTY', icon:'fence', description:'Athletic-field fencing and backstop installation as part of broader field construction or renovation.', image:projects[2].image},
+ {slug:'mound-construction', name:'Mound Construction', category:'SPECIALTY', icon:'mound', description:'Baseball mound construction and related infield work tailored to the field and level of play.', image:projects[0].image},
+];
+
+export const industries = ['Municipalities','Parks & Recreation','Schools','Colleges & Universities','Athletic Departments','Sports Organizations','Little Leagues','Community Recreation'];

@@ -1,0 +1,3 @@
+import './globals.css'; import Header from '../components/Header'; import Footer from '../components/Footer'; import {site} from '../lib/content';
+export const metadata={title:{default:'Greenway Athletic Field Services | Athletic Fields Built to Perform',template:'%s | Greenway Athletic Field Services'},description:site.description,metadataBase:new URL('https://www.greenwayafs.com'),openGraph:{title:'Greenway Athletic Field Services',description:site.description,type:'website'}};
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en"><body><Header/>{children}<div className="mobile-sticky"><a className="btn btn-primary" href="/contact">REQUEST A FIELD ASSESSMENT →</a></div><Footer/></body></html>}

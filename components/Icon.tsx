@@ -1,0 +1,2 @@
+import {HardHat, RotateCcw, Settings2, Droplets, Sprout, Crosshair, Fence, CircleDot, Waves, Ruler, Leaf, Trophy} from 'lucide-react';
+export default function Icon({type}:{type:string}){const M:any={construction:HardHat,renovation:RotateCcw,maintenance:Settings2,drainage:Droplets,irrigation:Droplets,grading:Crosshair,sod:Sprout,infield:CircleDot,lining:Ruler,aeration:Waves,fence:Fence,mound:Trophy};const C=M[type]||Leaf;return <C size={24} strokeWidth={1.7}/>}
