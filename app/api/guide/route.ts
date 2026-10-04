@@ -33,7 +33,6 @@ export async function POST(req: Request) {
         email,
         phone: typeof body.phone === 'string' ? body.phone.trim() : '',
       },
-      attachments: [],
     };
 
     list.unshift(entry);

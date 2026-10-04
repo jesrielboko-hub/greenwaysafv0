@@ -81,7 +81,6 @@ function LeadCard({lead}:{lead:any}){
    {lead.type==='assessment'&&<><div><span>Phone</span><strong>{d.phone||'—'}</strong></div><div><span>Field Location</span><strong>{d.location||'—'}</strong></div><div><span>Field Type</span><strong>{d.fieldType||'—'}</strong></div><div><span>Need</span><strong>{d.need||'—'}</strong></div><div><span>Timeline</span><strong>{d.timeline||'—'}</strong></div></>}
   </div>
   {lead.type==='assessment'&&d.description&&<div className="lead-message"><span>Project Description</span><p>{d.description}</p></div>}
-  {Array.isArray(lead.attachments)&&lead.attachments.length>0&&<div className="lead-attachments"><span>ATTACHED FIELD PHOTOS</span><div>{lead.attachments.map((a:any,i:number)=><a key={i} href={a.url} target="_blank" rel="noreferrer"><img src={a.url} alt={a.name||'Field photo'}/><small>{a.name}</small></a>)}</div></div>}
   <details className="lead-raw"><summary>View submission details</summary><pre>{JSON.stringify(d,null,2)}</pre></details>
  </article>
 }
