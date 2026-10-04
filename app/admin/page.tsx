@@ -6,8 +6,8 @@ import Link from 'next/link';
 type AnyObj=any;
 const blankProject={slug:'',name:'',location:'',year:'',sport:'',image:'',summary:'',scope:[],services:[],featured:false};
 const blankService={slug:'',name:'',category:'',icon:'',description:'',image:'',fullDescription:'',symptoms:[],process:[],relatedProjects:[]};
-export default function Admin(){const [authed,setAuthed]=useState(false),[password,setPassword]=useState(''),[content,setContent]=useState<AnyObj>(null),[leads,setLeads]=useState<any[]>([]),[tab,setTab]=useState('dashboard'),[editing,setEditing]=useState<any>(null),[message,setMessage]=useState('');
- async function load(){const r=await fetch('/api/admin/content');if(r.status===401){setAuthed(false);return}setAuthed(true);setContent(await r.json());const l=await fetch('/api/admin/leads');if(l.ok)setLeads(await l.json())}
+export default function Admin(){const [authed,setAuthed]=useState(false),[password,setPassword]=useState(''),[content,setContent]=useState<AnyObj>(null),[leads,setLeads]=useState<any[]>([]),[analytics,setAnalytics]=useState<any>({totalViews:0,last7Days:0,topPages:[]}),[tab,setTab]=useState('dashboard'),[editing,setEditing]=useState<any>(null),[message,setMessage]=useState('');
+ async function load(){const r=await fetch('/api/admin/content');if(r.status===401){setAuthed(false);return}setAuthed(true);setContent(await r.json());const l=await fetch('/api/admin/leads');if(l.ok)setLeads(await l.json());const a=await fetch('/api/admin/analytics');if(a.ok)setAnalytics(await a.json())}
  useEffect(()=>{load()},[]);
  async function login(e:any){e.preventDefault();const r=await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password})});if(r.ok){setPassword('');await load()}else setMessage('Invalid password')}
  async function save(next=content){const r=await fetch('/api/admin/content',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(next)});if(r.ok){setContent((await r.json()).content);setMessage('Saved');setEditing(null);setTimeout(()=>setMessage(''),1800)}else setMessage('Save failed')}
@@ -17,7 +17,30 @@ export default function Admin(){const [authed,setAuthed]=useState(false),[passwo
  const saveField=(field:string,value:any)=>setContent({...content,[field]:value});
  const deleteItem=(field:string,index:number)=>{const next={...content,[field]:content[field].filter((_:any,i:number)=>i!==index)};save(next)};
  return <main className="admin-shell"><div className="admin-top"><div className="container admin-top-inner"><Link href="/" className="admin-brand">GREENWAY AFS · ADMIN</Link><div><a href="/" target="_blank" className="admin-link">VIEW SITE <ExternalLink size={14}/></a><button className="admin-link" onClick={async()=>{await fetch('/api/admin/logout',{method:'POST'});setAuthed(false)}}><LogOut size={14}/> LOG OUT</button></div></div></div><div className="container admin-layout"><aside className="admin-sidebar">{[['dashboard','Dashboard'],['projects','Projects'],['services','Services'],['leadership','Leadership'],['testimonials','Testimonials'],['resource','Guide / Resource'],['partners','Industry Partners'],['settings','Site Settings'],['leads','Leads']].map(([id,label])=><button className={tab===id?'active':''} onClick={()=>{setTab(id);setEditing(null)}} key={id}>{label}</button>)}</aside><section className="admin-main"><div className="admin-heading"><div><div className="eyebrow">CONTENT MANAGEMENT</div><h1 className="display">{tab.replaceAll('-',' ')}</h1></div>{message&&<span className="save-message">{message}</span>}</div>
- {tab==='dashboard'&&<><div className="admin-cards"><div><strong>{content.projects.length}</strong><span>Projects</span></div><div><strong>{content.services.length}</strong><span>Services</span></div><div><strong>{content.testimonials.length}</strong><span>Testimonials</span></div><div><strong>{leads.length}</strong><span>Leads</span></div></div><div className="admin-note"><strong>Render Free storage note</strong><p>This admin console is wired for Render now, but files written to the service filesystem are ephemeral on the Free plan. Content/uploads can disappear after redeploys, restarts or spin-downs. Render recommends a datastore for persistent data; Free Postgres currently expires after 30 days.</p><p>For launch, upgrade storage or connect the same API layer to persistent Postgres/object storage.</p></div></>}
+ {tab==='dashboard'&&<>
+  <div className="admin-cards">
+   <div><strong>{content.projects.length}</strong><span>Projects</span></div>
+   <div><strong>{content.services.length}</strong><span>Services</span></div>
+   <div><strong>{leads.length}</strong><span>Leads</span></div>
+   <div><strong>{analytics.totalVisits||0}</strong><span>Website Visits</span></div>
+  </div>
+  <div className="admin-overview">
+   <div className="admin-panel"><h2>Quick Start</h2><ol className="quick-start">
+    <li><strong>Projects:</strong> add new projects, update locations, sports, photos and case-study details.</li>
+    <li><strong>Services:</strong> update service descriptions and related field information.</li>
+    <li><strong>Leadership:</strong> keep leadership bios current.</li>
+    <li><strong>Guide / Resource:</strong> update the Built Beneath the Surface resource and cover.</li>
+    <li><strong>Leads:</strong> review Field Assessment and Guide requests from visitors.</li>
+    <li><strong>Site Settings:</strong> update the business phone, email and description.</li>
+   </ol></div>
+   <div className="admin-panel"><h2>Lead Overview</h2><div className="analytics-list">
+    <div className="analytics-row"><span>Field Assessments</span><strong>{leads.filter(l=>l.type==='assessment').length}</strong></div>
+    <div className="analytics-row"><span>Guide Requests</span><strong>{leads.filter(l=>l.type==='guide').length}</strong></div>
+    <div className="analytics-row"><span>Total Leads</span><strong>{leads.length}</strong></div>
+   </div><p className="stat-note">Website visits are estimated from anonymous browser sessions. Page views are also tracked. No IP addresses are stored.</p></div>
+  </div>
+  <div className="admin-panel" style={{marginTop:18}}><h2>Website Activity</h2><div className="admin-cards"><div><strong>{analytics.last7DaysVisits||0}</strong><span>Visits · Last 7 Days</span></div></div>{analytics.topPages?.length>0&&<div className="analytics-list">{analytics.topPages.map((p:any)=><div className="analytics-row" key={p.page}><span>{p.page}</span><strong>{p.views}</strong></div>)}</div>}</div>
+ </>}
  {tab==='projects'&&<EditorList items={content.projects} setItems={(v:any)=>saveField('projects',v)} onSave={()=>save()} editing={editing} setEditing={setEditing} blank={blankProject} titleField="name" fields={['name','slug','location','year','sport','image','summary']} arrayFields={['scope','services']} />}
  {tab==='services'&&<EditorList items={content.services} setItems={(v:any)=>saveField('services',v)} onSave={()=>save()} editing={editing} setEditing={setEditing} blank={blankService} titleField="name" fields={['name','slug','category','icon','image','description','fullDescription']} arrayFields={['symptoms','process','relatedProjects']} />}
  {tab==='leadership'&&<EditorList items={content.leadership} setItems={(v:any)=>saveField('leadership',v)} onSave={()=>save()} editing={editing} setEditing={setEditing} blank={{role:'',name:'',bio:''}} titleField="name" fields={['role','name','bio']} />}
